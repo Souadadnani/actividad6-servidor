@@ -3,6 +3,7 @@ import express from "express";
 import UsuariosUseCases from "../../application/usuarios.usecases";
 import UsuariosRepositoryPostgreSQL from "../db/usuarios.postgres";
 import Usuario from "../../domain/Usuario";
+import { createToken } from "../../../context/security/auth";
 
 
 const usuarioUseCases: UsuariosUseCases = new UsuariosUseCases(new UsuariosRepositoryPostgreSQL());
@@ -25,10 +26,11 @@ router.post("/login", async (req: Request, res: Response) => {
         password,
     };
     const usuario = await usuarioUseCases.login(usuarioAPI);
-   /*  if(usuario === null){
+    if(usuario === null){
         res.status(400).json({mensaje: "Usuario no encontrado"});
-    } */
-    res.json({id: usuario.id, nombre: usuario.nombre});
+    } 
+    const token = createToken(usuario);
+    res.json({token, nombre: usuario.nombre});
 });
 
 export default router

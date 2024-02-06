@@ -10,15 +10,15 @@ export default class VideojuegosRepositoryPostgreSQL implements VideojuegosRepos
     }
 
     async save(videojuegos: Videojuego[]) {
-        const data : any[] = []
+        const data : any[] = [];
         for (const videojuego of videojuegos) {
-            data.push([videojuego.nombre])
+            data.push([videojuego.nombre]);
         }
         await executeQuery(format(`insert into videojuegos(nombre) values %L`, data));
     }
 
     async addToCart(videojuego: Videojuego): Promise<Videojuego[]> {
-        const videojuegos = await executeQuery(`insert into `)
+        const videojuegos = await executeQuery(`insert into compras(id, usuario, vi) `)
         throw new Error("Method not implemented.");
     }
     comprar(videojuego: Videojuego): Promise<Videojuego[]> {
