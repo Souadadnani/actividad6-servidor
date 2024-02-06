@@ -20,4 +20,8 @@ export default class VideojuegosUseCases{
         return this.videojuegoRepository.eliminar(id);
     } 
 
+    async getVideojuegosSteam(){
+        return this.videojuegoRepository.getVideojuegosSteam();
+    }
+
 }

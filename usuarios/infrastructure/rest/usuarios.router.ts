@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import express, { Router } from "express";
+import express from "express";
 import UsuariosUseCases from "../../application/usuarios.usecases";
 import UsuariosRepositoryPostgreSQL from "../db/usuarios.postgres";
 import Usuario from "../../domain/Usuario";
