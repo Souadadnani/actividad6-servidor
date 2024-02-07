@@ -32,9 +32,8 @@ export default class VideojuegosRepositoryPostgreSQL implements VideojuegosRepos
     }
 
     async addToCart(carrito: Compra): Promise<Compra> {  
-        // recuperar el id usuario desde payload sin falta pasarlo como parametro 
+        // recuperar el id usuario desde payload y no haga falta pasarlo como parametro 
         const result: any[] = await executeQuery(`insert into compras(usuario, videojuego) values('${carrito.usuario}', '${carrito.videojuego}') returning*`);
-       console.log("ver el result", result);
         const carritoBD: Compra = {
             usuario: result[0].usuario,
             videojuego: result[0].videojuego,
