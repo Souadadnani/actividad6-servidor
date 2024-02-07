@@ -3,10 +3,10 @@ import Compra from "./Compra";
 import Videojuego from "./Videojuego";
 
 export default interface VideojuegosRepository{
-    getAll(): Promise<Compra[]>;
-    save(videojuegos: Videojuego[]);
+    getCarrito(carrito: Compra): Promise<Compra[]>;
     addToCart(carrito: Compra): Promise<Compra>;
     comprar(compra: Compra): Promise<Compra>;
-    eliminar(id: number, user: Usuario): Promise<Compra[]>;
+    eliminar(carrito: Compra): Promise<Compra[]>;
+    save(videojuegos: Videojuego[]);
     getVideojuegosSteam();
 }

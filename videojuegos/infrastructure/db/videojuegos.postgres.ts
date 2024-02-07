@@ -8,12 +8,19 @@ import format from 'pg-format'
 export default class VideojuegosRepositoryPostgreSQL implements VideojuegosRepository{
 
 
-    getAll(): Promise<Compra[]> {
+    async getCarrito(carrito: Compra): Promise<Compra[]> {
+        const carritos: Compra[] = [];
+        const carritoBD: any[] = await executeQuery(`select * from compras where comprado='${carrito.comprado=false}' and usuario='${carrito.usuario}'`);
+        if(carritoBD){
+           /*  id: carritoBD[0].id,
+            usuario: carritoBD[0].usuario,
+             */
+        }
         throw new Error("Method not implemented.");
     }
 
     async addToCart(carrito: Compra): Promise<Compra> {  
-        // le podemos cogir el id usario del payload sin falta pasarlo como parametro 
+        // le podemos coger el id usario del payload sin falta pasarlo como parametro 
         const {usuario, videojuego} = carrito;
         const result: any[] = await executeQuery(`insert into compras(usuario, videojuego) vlaues('${usuario.id}', '${videojuego.id}') returning*`);
         const carritoBD: Compra = {
@@ -27,14 +34,10 @@ export default class VideojuegosRepositoryPostgreSQL implements VideojuegosRepos
 
     async comprar(compra: Compra): Promise<Compra> {
          //para hacer la compra pasar el id videojuego y el id usuario
-         // le podemos cogir el id usario del payload sin falta pasarlo como parametro 
-        const compraBD = await executeQuery(`select * from compras where id=${compra.id}`);
-        console.log(compraBD);
-        const carritoBD: Compra = {};
-        if(compraBD){
-            const result= await executeQuery(`alter table compras alter column compra set '${compra.comprado=true}') returning*`);
+         // le podemos cogir el id usario del payload sin falta pasarlo como parametro           
+            const result= await executeQuery(`update compras set comprado='${compra.comprado=true}' where id='${compra.id}')`);
             console.log(result);
-            carritoBD = {
+            const carritoBD: Compra = {
                 id: result[0].id,
                 usuario: result[0].usuario,
                 videojuego: result[0].videojuego,
@@ -42,8 +45,11 @@ export default class VideojuegosRepositoryPostgreSQL implements VideojuegosRepos
         }
         return carritoBD;
     }
-    }
-    eliminar(id: number): Promise<Compra[]> {
+
+    async eliminar(carrito: Compra): Promise<Compra[]> {
+        const result = await executeQuery(`delete from compras where id='${carrito.id} and comprado='${carrito.comprado=false}''`);
+        console.log(result);
+        
         throw new Error("Method not implemented.");
     }
 
