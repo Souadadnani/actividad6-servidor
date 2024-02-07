@@ -9,16 +9,30 @@ export default class VideojuegosRepositoryPostgreSQL implements VideojuegosRepos
 
 
     async getCarrito(carrito: Compra): Promise<Compra[]> {
-        const carritos: Compra[] = [];
         const carritoBD: any[] = await executeQuery(`select * from compras where comprado='${carrito.comprado=false}' and usuario='${carrito.usuario}'`);
-        if(carritoBD){
-           /*  id: carritoBD[0].id,
-            usuario: carritoBD[0].usuario,
-             */
-        }
-        throw new Error("Method not implemented.");
+        const carritos: Compra[] = carritoBD.map(item=>{
+            return {
+                id: item.id,
+                usuario: item.usuario,
+                videojuego: item.videojuego
+            }
+        });
+            return carritos;
     }
 
+
+    async getCompras(compra: Compra): Promise<Compra[]> {
+        const comprasBD: any[] = await executeQuery(`select * from compras where comprado='${compra.comprado=true}' and usuario='${compra.usuario}'`);
+        const compras: Compra[] = comprasBD.map(item=>{
+            return {
+                id: item.id,
+                usuario: item.usuario,
+                videojuego: item.videojuego
+            }
+        });
+            return compras;
+        
+    }
     async addToCart(carrito: Compra): Promise<Compra> {  
         // le podemos coger el id usario del payload sin falta pasarlo como parametro 
         const {usuario, videojuego} = carrito;

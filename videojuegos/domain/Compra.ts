@@ -5,5 +5,5 @@ export default interface Compra {
     id?: number,
     usuario: Usuario,
     videojuego: Videojuego,
-    comprado: boolean
+    comprado?: boolean
 }

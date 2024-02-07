@@ -12,14 +12,9 @@ router.get("/", async (req: Request, res: Response) => {
     res.json(videojuegos);
 });
 
-/* router.post("/", async (req: Request, res: Response) => {
-    const {nombre} = req.body;
-    const videojuego: Videojuego = {
-        nombre
-    }
-    const videojuegos = await videojuegosUseCases.save(videojuego);
-    res.json(videojuegos);
-}); */
+router.post("/carrito/videojuego", async (req: Request, res: Response)=>{
+    
+})
 
 
 export default router;
