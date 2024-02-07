@@ -3,6 +3,7 @@ import Usuario from "../../domain/Usuario";
 import UsuarioRepository from "../../domain/usuarios.repository";
 
 export default class UsuariosRepositoryPostgreSQL implements UsuarioRepository {
+    
     async registrar(usuario: Usuario): Promise<Usuario> {     
         const { nombre, password } = usuario;
         const result: any[] = await executeQuery(`insert into usuarios(nombre, password) values('${nombre}', '${password}') returning*`);
@@ -23,8 +24,6 @@ export default class UsuariosRepositoryPostgreSQL implements UsuarioRepository {
                 id: rows[0].id,
                 nombre: rows[0].nombre,
                 password: rows[0].password,
-                compras: rows[0].compras,
-                carritos: rows[0].carritos
             };
             return user;
         }    

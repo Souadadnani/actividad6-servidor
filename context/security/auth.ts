@@ -12,7 +12,7 @@ const decode = (token: string)=>{
 
 //crear el token
 const createToken = (usuario: Usuario): string =>{
-    const payload = {id: usuario.id};
+    const payload = {user: usuario.id};
     return jwt.sign(payload, SECRET_KEY, {expiresIn: "1 days"});
 }
 
@@ -23,9 +23,10 @@ const isAuth = (req: Request, res: Response, next: NextFunction) => {
         if(token){
             //verificar si el token es valido usando la clave de firma
             const decoded: any = jwt.verify(token, SECRET_KEY);
-            console.log(decoded);
+            console.log(decoded);           
+            req.body.user = decoded.user;
+            console.log("is auth",req.body.user);
             
-            req.body.id = decoded.id;
             next();
         }else{
             res.status(401).json({mensaje: "No autorizado"});

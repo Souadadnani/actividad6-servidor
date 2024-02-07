@@ -31,7 +31,7 @@ router.post("/login", async (req: Request, res: Response) => {
     } 
     console.log("Llega aqui", usuario);   
     const token = createToken(usuario);
-    res.json({token, nombre: usuario.nombre});
+    res.json({nombre: usuario.nombre, token});
 });
 
 export default router

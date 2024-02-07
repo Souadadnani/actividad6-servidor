@@ -16,16 +16,18 @@ test('registrar', async (t) => {
 });
  
 test('login', async (t) => {
-
     const userARegistrar: Usuario = {
         nombre: "User1",
         password: "1234"
     }
-
     const userRegistrado = await usuariosUseCases.registrar(userARegistrar);
     const userLogin = await usuariosUseCases.login(userARegistrar);
 
     assert.strictEqual(userRegistrado.id, userLogin.id);
+});
+
+test('getCarrito', async (t)=>{
+    
 })
 
 

@@ -1,3 +1,4 @@
+import { log } from "console";
 import executeQuery from "../../../context/postgres.connector";
 import Usuario from "../../../usuarios/domain/Usuario";
 import Compra from "../../domain/Compra";
@@ -8,11 +9,10 @@ import format from 'pg-format'
 export default class VideojuegosRepositoryPostgreSQL implements VideojuegosRepository{
 
 
-    async getCarrito(carrito: Compra): Promise<Compra[]> {
-        const carritoBD: any[] = await executeQuery(`select * from compras where comprado='${carrito.comprado=false}' and usuario='${carrito.usuario}'`);
+    async getCarrito(user: Usuario): Promise<Compra[]> {
+        const carritoBD: any[] = await executeQuery(`select * from compras where usuario='${user.id}' and fechaCompra is null`);
         const carritos: Compra[] = carritoBD.map(item=>{
             return {
-                id: item.id,
                 usuario: item.usuario,
                 videojuego: item.videojuego
             }
@@ -20,54 +20,37 @@ export default class VideojuegosRepositoryPostgreSQL implements VideojuegosRepos
             return carritos;
     }
 
-
-    async getCompras(compra: Compra): Promise<Compra[]> {
-        const comprasBD: any[] = await executeQuery(`select * from compras where comprado='${compra.comprado=true}' and usuario='${compra.usuario}'`);
+    async getCompras(user: Usuario): Promise<Compra[]> {
+        const comprasBD: any[] = await executeQuery(`select * from compras where usuario='${user.id}' and fechaCompra is not null`);
         const compras: Compra[] = comprasBD.map(item=>{
             return {
-                id: item.id,
                 usuario: item.usuario,
                 videojuego: item.videojuego
             }
         });
-            return compras;
-        
+        return compras;     
     }
+
     async addToCart(carrito: Compra): Promise<Compra> {  
-        // le podemos coger el id usario del payload sin falta pasarlo como parametro 
-        const {usuario, videojuego} = carrito;
-        const result: any[] = await executeQuery(`insert into compras(usuario, videojuego) vlaues('${usuario.id}', '${videojuego.id}') returning*`);
+        // recuperar el id usuario desde payload sin falta pasarlo como parametro 
+        const result: any[] = await executeQuery(`insert into compras(usuario, videojuego) values('${carrito.usuario}', '${carrito.videojuego}') returning*`);
+       console.log("ver el result", result);
         const carritoBD: Compra = {
-            id: result[0].id,
             usuario: result[0].usuario,
             videojuego: result[0].videojuego,
-            comprado: result[0].comprado
+            fechaCompra: result[0].fechaCompra
         }
         return carritoBD;
     }
 
-    async comprar(compra: Compra): Promise<Compra> {
-         //para hacer la compra pasar el id videojuego y el id usuario
-         // le podemos cogir el id usario del payload sin falta pasarlo como parametro           
-            const result= await executeQuery(`update compras set comprado='${compra.comprado=true}' where id='${compra.id}')`);
-            console.log(result);
-            const carritoBD: Compra = {
-                id: result[0].id,
-                usuario: result[0].usuario,
-                videojuego: result[0].videojuego,
-                comprado: result[0].comprado
-        }
-        return carritoBD;
+    async comprar(compra: Compra) {          
+        await executeQuery(`update compras set fechaCompra='${compra.fechaCompra}' where usuario='${compra.usuario}' and videojuego='${compra.videojuego}'`);
     }
 
-    async eliminar(carrito: Compra): Promise<Compra[]> {
-        const result = await executeQuery(`delete from compras where id='${carrito.id} and comprado='${carrito.comprado=false}''`);
-        console.log(result);
-        
-        throw new Error("Method not implemented.");
+    //eliminar un videojuego del carrito
+    async eliminar(carrito: Compra): Promise<void> {
+        await executeQuery(`delete from compras where videojuego='${carrito.videojuego}' and usuario='${carrito.usuario}' and fechaCompra is null`);
     }
-
-
 
     async save(videojuegos: Videojuego[]) {
         const data : any[] = [];
