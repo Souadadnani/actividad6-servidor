@@ -8,10 +8,14 @@ export default class UsuariosUseCases {
     }
 
     async registrar(usuario: Usuario){
+        const userToSave : Usuario = {
+            nombre: usuario.nombre,
+            password: ""
+        }
         if(!usuario.password) throw new Error("Falta password");
         const cifrada = hash(usuario.password);
-        usuario.password = cifrada;
-        return this.usuarioRepository.registrar(usuario);
+        userToSave.password = cifrada;
+        return this.usuarioRepository.registrar(userToSave);
     }
 
     async login(usuario: Usuario){

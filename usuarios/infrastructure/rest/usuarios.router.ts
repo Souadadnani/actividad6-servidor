@@ -29,6 +29,7 @@ router.post("/login", async (req: Request, res: Response) => {
     if(usuario === null){
         res.status(400).json({mensaje: "Usuario no encontrado"});
     } 
+    console.log("Llega aqui", usuario);   
     const token = createToken(usuario);
     res.json({token, nombre: usuario.nombre});
 });

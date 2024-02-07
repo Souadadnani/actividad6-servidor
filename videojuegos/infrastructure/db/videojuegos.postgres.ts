@@ -1,13 +1,53 @@
 import executeQuery from "../../../context/postgres.connector";
+import Usuario from "../../../usuarios/domain/Usuario";
+import Compra from "../../domain/Compra";
 import Videojuego from "../../domain/Videojuego";
 import VideojuegosRepository from "../../domain/videojuegos.repository";
 import format from 'pg-format'
 
 export default class VideojuegosRepositoryPostgreSQL implements VideojuegosRepository{
 
-    getAll(): Promise<Videojuego[]> {
+
+    getAll(): Promise<Compra[]> {
         throw new Error("Method not implemented.");
     }
+
+    async addToCart(carrito: Compra): Promise<Compra> {  
+        // le podemos cogir el id usario del payload sin falta pasarlo como parametro 
+        const {usuario, videojuego} = carrito;
+        const result: any[] = await executeQuery(`insert into compras(usuario, videojuego) vlaues('${usuario.id}', '${videojuego.id}') returning*`);
+        const carritoBD: Compra = {
+            id: result[0].id,
+            usuario: result[0].usuario,
+            videojuego: result[0].videojuego,
+            comprado: result[0].comprado
+        }
+        return carritoBD;
+    }
+
+    async comprar(compra: Compra): Promise<Compra> {
+         //para hacer la compra pasar el id videojuego y el id usuario
+         // le podemos cogir el id usario del payload sin falta pasarlo como parametro 
+        const compraBD = await executeQuery(`select * from compras where id=${compra.id}`);
+        console.log(compraBD);
+        const carritoBD: Compra = {};
+        if(compraBD){
+            const result= await executeQuery(`alter table compras alter column compra set '${compra.comprado=true}') returning*`);
+            console.log(result);
+            carritoBD = {
+                id: result[0].id,
+                usuario: result[0].usuario,
+                videojuego: result[0].videojuego,
+                comprado: result[0].comprado
+        }
+        return carritoBD;
+    }
+    }
+    eliminar(id: number): Promise<Compra[]> {
+        throw new Error("Method not implemented.");
+    }
+
+
 
     async save(videojuegos: Videojuego[]) {
         const data : any[] = [];
@@ -15,17 +55,6 @@ export default class VideojuegosRepositoryPostgreSQL implements VideojuegosRepos
             data.push([videojuego.nombre]);
         }
         await executeQuery(format(`insert into videojuegos(nombre) values %L`, data));
-    }
-
-    async addToCart(videojuego: Videojuego): Promise<Videojuego[]> {
-        const videojuegos = await executeQuery(`insert into compras(id, usuario, vi) `)
-        throw new Error("Method not implemented.");
-    }
-    comprar(videojuego: Videojuego): Promise<Videojuego[]> {
-        throw new Error("Method not implemented.");
-    }
-    eliminar(id: number): Promise<Videojuego[]> {
-        throw new Error("Method not implemented.");
     }
 
     async getVideojuegosSteam() {
