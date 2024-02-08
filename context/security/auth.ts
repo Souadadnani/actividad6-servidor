@@ -19,6 +19,7 @@ const createToken = (usuario: Usuario): string =>{
 const isAuth = (req: Request, res: Response, next: NextFunction) => {
     try {
         const authHeader = req.headers["authorization"];
+        //me quedo con la segunda parte del header pasandola a la variable token
         const token: string | undefined = authHeader && authHeader.split(" ")[1];
         if(token){
             //verificar si el token es valido usando la clave de firma
